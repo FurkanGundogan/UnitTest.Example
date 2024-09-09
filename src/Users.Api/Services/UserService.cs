@@ -119,7 +119,7 @@ namespace Users.Api.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Something went wrogn while retriving user with id: {0}", id);
+                logger.LogError(ex, "Something went wrong while retriving user with id: {0}", id);
                 throw;
             }
             finally
