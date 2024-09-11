@@ -26,11 +26,7 @@ namespace Users.Api.Services
                 throw new ArgumentException("Name already exist");
             }
 
-            User user = new User()
-            {
-                Id = Guid.NewGuid(),
-                FullName = request.FullName
-            };
+            var user = CreateUserDtoToUserObject(request);
 
             logger.LogInformation("Creating new user with id: {0} and name: {1}", user.Id, user.FullName);
 
@@ -42,7 +38,7 @@ namespace Users.Api.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Something went wrogn while creating user");
+                logger.LogError(ex, "Something went wrong while creating user");
                 throw;
             }
             finally
@@ -128,6 +124,16 @@ namespace Users.Api.Services
                 logger.LogInformation("User with id: {0} retrieved in {1}ms", id, stopWatch.ElapsedMilliseconds);
 
             }
+        }
+
+        public User CreateUserDtoToUserObject(CreateUserDto request) {
+            User user = new User()
+            {
+                Id = Guid.NewGuid(),
+                FullName = request.FullName
+            };
+
+            return user;
         }
     }
 }
