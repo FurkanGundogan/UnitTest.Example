@@ -1,4 +1,4 @@
-# ExampleApp
+# xUnit Test ExampleApp
 
 Unit Test example project using xUnit
 
