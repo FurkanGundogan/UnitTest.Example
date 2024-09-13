@@ -68,7 +68,7 @@ namespace Users.Api.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Something went wrogn while deleting user");
+                logger.LogError(ex, "Something went wrong while deleting user");
                 throw;
             }
             finally

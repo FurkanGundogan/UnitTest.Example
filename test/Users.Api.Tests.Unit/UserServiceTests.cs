@@ -274,5 +274,108 @@ namespace Users.Api.Tests.Unit
 
         }
 
+        [Fact]
+        public async Task DeleteByIdAsync_ShouldDeleteUser_WhenUserExists() { 
+        
+            // Arrange
+            var userId = Guid.NewGuid();
+            User user = new User() {
+                Id = userId,
+                FullName = "Furkannnn"
+            };
+            _userRepository.GetByIdAsync(userId).Returns(user);
+            _userRepository.DeleteAsync(user).Returns(true);
+
+            // Act
+            var result = await _sut.DeleteByIdAsync(userId);
+
+            // Assert
+
+            result.Should().BeTrue();
+
+            
+        }
+
+        [Fact]
+        public async Task DeleteByIdAsync_ShouldThrownAnError_WhenUserNotExists()
+        {
+
+            // Arrange
+            var userId = Guid.NewGuid();
+
+            _userRepository.GetByIdAsync(userId).ReturnsNull();
+
+
+            // Act
+            var action = async () => await _sut.DeleteByIdAsync(userId);
+
+            // Assert
+
+            await action.Should().ThrowAsync<ArgumentException>();
+
+
+        }
+
+        [Fact]
+        public async Task DeleteByIdAsync_ShouldLogMessage_WhenInvoked()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            User user = new User()
+            {
+                Id = userId,
+                FullName = "Furkannnn"
+            };
+
+            _userRepository.GetByIdAsync(userId).Returns(user);
+
+            _userRepository.DeleteAsync(user).Returns(true);
+
+            // Act
+            await _sut.DeleteByIdAsync(userId);
+
+            // Assert
+            _logger.Received(1).LogInformation(
+                Arg.Is("Deleting user with id: {0}"),
+                Arg.Is(userId));
+
+            _logger.Received(1).LogInformation(
+                Arg.Is("User with id: {0} deleted in {1}ms"),
+                Arg.Is(userId),
+                Arg.Any<long>());
+
+        }
+
+
+        [Fact]
+        public async Task DeleteByIdAsync_ShouldLogMessageAndException_WhenExceptionIsThrown()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            User user = new User()
+            {
+                Id = userId,
+                FullName = "Furkannnn"
+            };
+
+            _userRepository.GetByIdAsync(userId).Returns(user);
+
+            var ex = new ArgumentException("Something went wrong while deleting user");
+           
+            _userRepository.DeleteAsync(user).Throws(ex);
+
+            // Act
+            var requestAction = async () => await _sut.DeleteByIdAsync(userId);
+
+            // Assert
+            await requestAction.Should()
+                .ThrowAsync<ArgumentException>();
+
+            _logger.Received(1).LogError(
+                Arg.Is(ex),
+                Arg.Is("Something went wrong while deleting user"));
+
+        }
+
     }
 }
